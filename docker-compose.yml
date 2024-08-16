@@ -6,7 +6,7 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
     environment:
-      - MYSQL_ROOT_PASSWORD=forge123
+      - MYSQL_ROOT_PASSWORD=clwy1234
       - MYSQL_LOWER_CASE_TABLE_NAMES=0
     ports:
       - "3306:3306"
