@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Habit } = require('../models');
+const { Op } = require('sequelize');
 
 /**
  * 查询习惯列表
@@ -8,15 +9,18 @@ const { Habit } = require('../models');
  */
 router.get('/', async function (req, res) {
   try {
-    // 定义查询条件
+    const query = req.query;
     const condition = {
       order: [['id', 'DESC']],
     };
-
-    // 查询数据
+    if (query.name) {
+      condition.where = {
+        name: {
+          [Op.like]: `%${query.name}%`,
+        }
+      }
+    }
     const habits = await Habit.findAll(condition);
-
-    // 返回查询结果
     res.json({
       status: true,
       message: '查询习惯列表成功',
@@ -25,7 +29,6 @@ router.get('/', async function (req, res) {
       },
     });
   } catch (error) {
-    // 返回错误信息
     res.status(500).json({
       status: false,
       message: '查询习惯列表失败',
@@ -42,7 +45,6 @@ router.get('/:id', async function (req, res) {
   try {
     const { id } = req.params;
     const habit = await Habit.findByPk(id);
-
     if (habit) {
       res.json({
         status: true,
