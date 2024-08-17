@@ -83,7 +83,8 @@ router.get('/:id', async function (req, res) {
  */
 router.post('/', async function (req, res) {
   try {
-    const habit = await Habit.create(req.body);
+    const body = filterBody(req.body);
+    const habit = await Habit.create(body);
     res.status(201).json({
       status: true,
       message: '创建习惯成功',
@@ -93,6 +94,37 @@ router.post('/', async function (req, res) {
     res.status(500).json({
       status: false,
       message: '创建习惯失败',
+      errors: [error.message],
+    });
+  }
+});
+
+/**
+ * 更新习惯
+ * PUT /habits/:id
+ */
+router.put('/:id', async function (req, res) {
+  try {
+    const { id } = req.params;
+    const habit = await Habit.findByPk(id);
+    const body = filterBody(req.body);
+    if (habit) {
+      await habit.update(body);
+      res.json({
+        status: true,
+        message: '更新习惯成功',
+        data: habit,
+      })
+    } else {
+      res.status(404).json({
+        status: false,
+        message: '未找到习惯',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: '更新习惯失败',
       errors: [error.message],
     });
   }
@@ -128,33 +160,16 @@ router.delete('/:id', async function (req, res) {
 });
 
 /**
- * 更新习惯
- * PUT /habits/:id
+ * 公共方法：白名单过滤
+ * @param req
+ * @returns
  */
-router.put('/:id', async function (req, res) {
-  try {
-    const { id } = req.params;
-    const habit = await Habit.findByPk(id);
-    if (habit) {
-      await habit.update(req.body);
-      res.json({
-        status: true,
-        message: '更新习惯成功',
-        data: habit,
-      })
-    } else {
-      res.status(404).json({
-        status: false,
-        message: '未找到习惯',
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '更新习惯失败',
-      errors: [error.message],
-    });
-  }
-});
+const filterBody = (req) => {
+  return {
+    logo: req.body.logo,
+    name: req.body.name,
+    description: req.body.description,
+  };
+}
 
 module.exports = router;
