@@ -91,11 +91,20 @@ router.post('/', async function (req, res) {
       data: habit,
     });
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '创建习惯失败',
-      errors: [error.message],
-    });
+    if (error.name === 'SequelizeValidationError') {
+      const errors = error.errors.map(e => e.message);
+      res.status(400).json({
+        status: false,
+        message: '请求参数错误',
+        errors,
+      });
+    } else {
+      res.status(500).json({
+        status: false,
+        message: '创建习惯失败',
+        errors: [error.message],
+      });
+    }
   }
 });
 
