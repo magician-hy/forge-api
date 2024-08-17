@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Habit } = require('../models');
 const { Op } = require('sequelize');
+const { NotFoundError, success, failure } = require('../utils/response');
 
 /**
  * 查询习惯列表
@@ -27,24 +28,16 @@ router.get('/', async function (req, res) {
       }
     }
     const { count, rows } = await Habit.findAndCountAll(condition);
-    res.json({
-      status: true,
-      message: '查询习惯列表成功',
-      data: {
-        habits: rows,
-        pagination: {
-          total: count,
-          currentPage,
-          pageSize,
-        },
+    success(res, '查询习惯列表成功', {
+      habits: rows,
+      pagination: {
+        total: count,
+        currentPage,
+        pageSize,
       },
     });
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '查询习惯列表失败',
-      errors: [error.message],
-    });
+    failure(res, error);
   }
 });
 
@@ -54,26 +47,10 @@ router.get('/', async function (req, res) {
   */
 router.get('/:id', async function (req, res) {
   try {
-    const { id } = req.params;
-    const habit = await Habit.findByPk(id);
-    if (habit) {
-      res.json({
-        status: true,
-        message: '查询习惯成功',
-        data: habit,
-      });
-    } else {
-      res.status(404).json({
-        status: false,
-        message: '未找到习惯',
-      });
-    }
+    const habit = await getHabit(req);
+    success(res, '查询习惯成功', habit);
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '查询习惯失败',
-      errors: [error.message],
-    });
+    failure(res, error);
   }
 });
 
@@ -85,26 +62,9 @@ router.post('/', async function (req, res) {
   try {
     const body = filterBody(req);
     const habit = await Habit.create(body);
-    res.status(201).json({
-      status: true,
-      message: '创建习惯成功',
-      data: habit,
-    });
+    success(res, '创建习惯成功', habit, 201);
   } catch (error) {
-    if (error.name === 'SequelizeValidationError') {
-      const errors = error.errors.map(e => e.message);
-      res.status(400).json({
-        status: false,
-        message: '请求参数错误',
-        errors,
-      });
-    } else {
-      res.status(500).json({
-        status: false,
-        message: '创建习惯失败',
-        errors: [error.message],
-      });
-    }
+    failure(res, error);
   }
 });
 
@@ -114,28 +74,12 @@ router.post('/', async function (req, res) {
  */
 router.put('/:id', async function (req, res) {
   try {
-    const { id } = req.params;
-    const habit = await Habit.findByPk(id);
+    const habit = await getHabit(req);
     const body = filterBody(req);
-    if (habit) {
-      await habit.update(body);
-      res.json({
-        status: true,
-        message: '更新习惯成功',
-        data: habit,
-      })
-    } else {
-      res.status(404).json({
-        status: false,
-        message: '未找到习惯',
-      });
-    }
+    await habit.update(body);
+    success(res, '更新习惯成功', habit);
   } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: '更新习惯失败',
-      errors: [error.message],
-    });
+    failure(res, error);
   }
 });
 
@@ -145,26 +89,11 @@ router.put('/:id', async function (req, res) {
   */
 router.delete('/:id', async function (req, res) {
   try {
-    const { id } = req.params;
-    const habit = await Habit.findByPk(id);
-    if (habit) {
-      await habit.destroy();
-      res.json({
-        status: true,
-        message: '删除习惯成功',
-      });
-    } else {
-      res.status(404).json({
-        status: false,
-        message: '未找到习惯',
-      });
-    }
+    const habit = await getHabit(req);
+    await habit.destroy();
+    success(res, '删除习惯成功');
   } catch {
-    res.status(500).json({
-      status: false,
-      message: '删除习惯失败',
-      errors: [error.message],
-    });
+    failure(res, error);
   }
 });
 
@@ -179,6 +108,18 @@ const filterBody = (req) => {
     name: req.body.name,
     description: req.body.description,
   };
+}
+
+/**
+ * 公共方法：查询当前习惯
+ */
+const getHabit = async (req) => {
+  const { id } = req.params;
+  const habit = await Habit.findByPk(id);
+  if (!habit) {
+    throw new NotFoundError(`ID: ${id} 的习惯未找到`);
+  }
+  return habit;
 }
 
 module.exports = router;
