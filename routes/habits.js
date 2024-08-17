@@ -81,4 +81,33 @@ router.post('/', async function (req, res) {
   }
 });
 
+/**
+ * 删除习惯
+ * DELETE /habits/:id
+  */
+router.delete('/:id', async function (req, res) {
+  try {
+    const { id } = req.params;
+    const habit = await Habit.findByPk(id);
+    if (habit) {
+      await habit.destroy();
+      res.json({
+        status: true,
+        message: '删除习惯成功',
+      })
+    } else {
+      res.status(404).json({
+        status: false,
+        message: '未找到习惯',
+      })
+    }
+  } catch {
+    res.status(500).json({
+      status: false,
+      message: '删除习惯失败',
+      errors: [error.message],
+    })
+  }
+});
+
 module.exports = router;
