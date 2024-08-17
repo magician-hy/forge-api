@@ -83,7 +83,7 @@ router.get('/:id', async function (req, res) {
  */
 router.post('/', async function (req, res) {
   try {
-    const body = filterBody(req.body);
+    const body = filterBody(req);
     const habit = await Habit.create(body);
     res.status(201).json({
       status: true,
@@ -107,7 +107,7 @@ router.put('/:id', async function (req, res) {
   try {
     const { id } = req.params;
     const habit = await Habit.findByPk(id);
-    const body = filterBody(req.body);
+    const body = filterBody(req);
     if (habit) {
       await habit.update(body);
       res.json({
