@@ -10,9 +10,15 @@ const { Op } = require('sequelize');
 router.get('/', async function (req, res) {
   try {
     const query = req.query;
+    const currentPage = Math.abs(Number(query.currentPage)) || 1;
+    const pageSize = Math.abs(Number(query.pageSize)) || 10;
+    const offset = (currentPage - 1) * pageSize;
     const condition = {
       order: [['id', 'DESC']],
+      offset,
+      limit: pageSize,
     };
+    // 模糊搜索
     if (query.name) {
       condition.where = {
         name: {
@@ -20,12 +26,17 @@ router.get('/', async function (req, res) {
         }
       }
     }
-    const habits = await Habit.findAll(condition);
+    const { count, rows } = await Habit.findAndCountAll(condition);
     res.json({
       status: true,
       message: '查询习惯列表成功',
       data: {
-        habits,
+        habits: rows,
+        pagination: {
+          total: count,
+          currentPage,
+          pageSize,
+        },
       },
     });
   } catch (error) {
