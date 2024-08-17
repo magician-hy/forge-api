@@ -19,6 +19,15 @@ module.exports = {
       description: {
         type: Sequelize.TEXT
       },
+      totalCount: {
+        type: Sequelize.INTEGER
+      },
+      currentCount: {
+        type: Sequelize.INTEGER
+      },
+      bestCount: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

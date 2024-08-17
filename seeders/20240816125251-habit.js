@@ -11,6 +11,9 @@ module.exports = {
         logo: '🔥',
         name: `习惯 ${i}`,
         description: `习惯描述 ${i}`,
+        totalCount: i,
+        currentCount: i,
+        bestCount: i,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

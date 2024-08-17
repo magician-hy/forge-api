@@ -31,7 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    description: DataTypes.TEXT
+    description: DataTypes.TEXT,
+    totalCount: DataTypes.INTEGER,
+    currentCount: DataTypes.INTEGER,
+    bestCount: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Habit',
