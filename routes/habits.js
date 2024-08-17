@@ -52,7 +52,7 @@ router.get('/:id', async function (req, res) {
     } else {
       res.status(404).json({
         status: false,
-        message: '查询习惯失败',
+        message: '未找到习惯',
       });
     }
   } catch (error) {
@@ -75,9 +75,13 @@ router.post('/', async function (req, res) {
       status: true,
       message: '创建习惯成功',
       data: habit,
-    })
+    });
   } catch (error) {
-
+    res.status(500).json({
+      status: false,
+      message: '创建习惯失败',
+      errors: [error.message],
+    });
   }
 });
 
@@ -94,19 +98,49 @@ router.delete('/:id', async function (req, res) {
       res.json({
         status: true,
         message: '删除习惯成功',
-      })
+      });
     } else {
       res.status(404).json({
         status: false,
         message: '未找到习惯',
-      })
+      });
     }
   } catch {
     res.status(500).json({
       status: false,
       message: '删除习惯失败',
       errors: [error.message],
-    })
+    });
+  }
+});
+
+/**
+ * 更新习惯
+ * PUT /habits/:id
+ */
+router.put('/:id', async function (req, res) {
+  try {
+    const { id } = req.params;
+    const habit = await Habit.findByPk(id);
+    if (habit) {
+      await habit.update(req.body);
+      res.json({
+        status: true,
+        message: '更新习惯成功',
+        data: habit,
+      })
+    } else {
+      res.status(404).json({
+        status: false,
+        message: '未找到习惯',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: '更新习惯失败',
+      errors: [error.message],
+    });
   }
 });
 
