@@ -64,4 +64,21 @@ router.get('/:id', async function (req, res) {
   }
 });
 
+/**
+ * 创建习惯
+ * POST /habits
+ */
+router.post('/', async function (req, res) {
+  try {
+    const habit = await Habit.create(req.body);
+    res.status(201).json({
+      status: true,
+      message: '创建习惯成功',
+      data: habit,
+    })
+  } catch (error) {
+
+  }
+});
+
 module.exports = router;
