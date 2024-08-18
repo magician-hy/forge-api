@@ -8,7 +8,7 @@ module.exports = {
 
     for (let i = 1; i <= counts; i++) {
       const habit = {
-        logo: '🔥',
+        icon: '🔥',
         name: `习惯 ${i}`,
         description: `习惯描述 ${i}`,
         totalCount: i,

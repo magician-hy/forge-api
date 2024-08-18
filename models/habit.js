@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Habit.init({
-    logo: DataTypes.STRING,
+    icon: DataTypes.STRING,
     name: {
       type: DataTypes.STRING,
       allowNull: false,
