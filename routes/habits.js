@@ -104,7 +104,7 @@ router.delete('/:id', async function (req, res) {
  */
 const filterBody = (req) => {
   return {
-    logo: req.body.logo,
+    icon: req.body.icon,
     name: req.body.name,
     description: req.body.description,
   };
