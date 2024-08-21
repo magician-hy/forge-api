@@ -6,6 +6,7 @@ const cors = require('cors')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const settingsRouter = require('./routes/settings');
 const habitsRouter = require('./routes/habits');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(cors(corsOptions));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/settings', settingsRouter);
 app.use('/habits', habitsRouter);
 
 module.exports = app;
