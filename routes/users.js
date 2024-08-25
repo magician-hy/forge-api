@@ -20,6 +20,14 @@ router.get('/', async function (req, res) {
       limit: pageSize,
     };
 
+    if (query.username) {
+      condition.where = {
+        username: {
+          [Op.like]: `%${query.username}%`
+        }
+      };
+    }
+
     if (query.email) {
       condition.where = {
         email: {
@@ -28,19 +36,10 @@ router.get('/', async function (req, res) {
       };
     }
 
-    if (query.username) {
+    if (query.telephone) {
       condition.where = {
-        username: {
-          [Op.eq]: query.username
-        }
-      };
-    }
-
-    // 模糊搜索
-    if (query.nickname) {
-      condition.where = {
-        nickname: {
-          [Op.like]: `%${query.nickname}%`
+        telephone: {
+          [Op.eq]: query.telephone
         }
       };
     }
@@ -116,15 +115,12 @@ router.put('/:id', async function (req, res) {
  */
 function filterBody(req) {
   return {
-    email: req.body.email,
+    avatar: req.body.avatar,
     username: req.body.username,
+    email: req.body.email,
+    telephone: req.body.telephone,
     password: req.body.password,
-    nickname: req.body.nickname,
-    sex: req.body.sex,
-    company: req.body.company,
-    introduce: req.body.introduce,
     role: req.body.role,
-    avatar: req.body.avatar
   };
 }
 
