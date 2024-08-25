@@ -1,31 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const { Setting } = require('../models');
+const { About } = require('../models');
 const { NotFoundError, success, failure } = require('../utils/response');
 
 /**
- * 查询系统设置详情
- * GET /settings
+ * 查询关于信息
+ * GET /about
   */
 router.get('/', async function (req, res) {
   try {
-    const setting = await getSetting();
-    success(res, '查询系统设置成功', setting);
+    const about = await getAbout();
+    success(res, '查询关于信息成功', about);
   } catch (error) {
     failure(res, error);
   }
 });
 
 /**
- * 更新系统设置
- * PUT /settings
+ * 更新关于信息
+ * PUT /about
  */
 router.put('/', async function (req, res) {
   try {
-    const setting = await getSetting();
+    const about = await getAbout();
     const body = filterBody(req);
-    await setting.update(body);
-    success(res, '更新系统设置成功', setting);
+    await about.update(body);
+    success(res, '更新关于信息成功', about);
   } catch (error) {
     failure(res, error);
   }
@@ -47,12 +47,12 @@ function filterBody(req) {
 /**
  * 公共方法：查询当前系统设置
  */
-const getSetting = async () => {
-  const setting = await Setting.findOne();
-  if (!setting) {
+const getAbout = async () => {
+  const about = await About.findOne();
+  if (!about) {
     throw new NotFoundError('初始系统设置未找到，请运行种子文件');
   }
-  return setting;
+  return about;
 }
 
 module.exports = router;
